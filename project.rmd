@@ -1,0 +1,72 @@
+Introduction
+---------------------------------------
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement â€“ a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: <http://groupware.les.inf.puc-rio.br/har> (see the section on the Weight Lifting Exercise Dataset).
+
+Introduction
+---------------------------------------
+The goal of your project is to predict the manner in which they did the exercise. This is the "classe" variable in the training set. You may use any of the other variables to predict with. You should create a report describing how you built your model, how you used cross validation, what you think the expected out of sample error is, and why you made the choices you did. You will also use your prediction model to predict 20 different test cases.
+
+Assignment
+---------------------------------------
+The goal of your project is to predict the manner in which they did the exercise. This is the "classe" variable in the training set. You may use any of the other variables to predict with. You should create a report describing how you built your model, how you used cross validation, what you think the expected out of sample error is, and why you made the choices you did. You will also use your prediction model to predict 20 different test cases.
+
+Possible solution
+---------------------------------------
+Firstly for preparing the workspace we have to think about loading packages like caret and kernlab.
+Next, we have to prepare consistent data with variables needed to predict manner. Preparation of data is divided into several steps including:
+
+1.) loading data from data set divided into two groups (pml-training and pml-testing)
+2.) repacling #DIV/0! with NA
+3.) replacing blank spaces with NA
+
+```{r echo=TRUE, results='hide', message=FALSE}
+library(data.table)
+library(caret)
+library(ggplot2)
+library(knitr)
+library(xtable)
+library(randomForest)
+library(kernlab)
+```
+
+```{r echo=TRUE, results='hide', message=FALSE}
+training_data <- read.csv("c:/machine/pml-training.csv", header = T, na.strings = c("NA", ""))
+testing_data <- read.csv("c:/machine/pml-testing.csv", header = T, na.strings = c("NA", ""))
+```
+
+The first thing to consider when creating is to ask the right question for the purpose of the model. The true purpose of this model is to predict the correct classification of the pml-testing using the quantitative data in pml-training.csv for development the model. According to computational complexity we have to choose the variables in order to importance to predicting manners. These selections we could divorce into:
+
+1.) removing data including NAs
+2.) removing collums in order to importance to predicting the manner
+
+```{r echo=TRUE, results='hide', message=FALSE}
+train.sub <- training_data[c(2,8,9,10,11,37,38,39,40,41,42,43,44,45,46,47,48,49,60,61,62,63,64,65,66,67,68,84,85,86,102,113,114,115,116,117,118,119,120,121,122,123,124,140,151,152,153,154,155,156,157,158,159,160)]
+test.sub <- testing_data[c(2,8,9,10,11,37,38,39,40,41,42,43,44,45,46,47,48,49,60,61,62,63,64,65,66,67,68,84,85,86,102,113,114,115,116,117,118,119,120,121,122,123,124,140,151,152,153,154,155,156,157,158,159,160)]
+```
+
+By cross-validation we splieted the training test into two separate groups: training and test group. The data was partioned by the classe variable to ensure the training set and test set contain examples of each class. Setting p equal to 0,6 we ensure that 60% of data set is located into training test and 40% to testing set. We could do it easily by following commands:
+
+```{r echo=TRUE, results='hide', message=FALSE}
+InTrain <- createDataPartition(train.sub$classe, p=0.6, list = FALSE)
+training <- train.sub[InTrain,]
+testing <- train.sub[-InTrain,]
+```
+We would like to use random forest to initialize the correct prediction. Calling the package randomForest we could do it very easily:
+```
+fit1 <- train(classe~ ., data = training, method = "rf", prox = FALSE)
+```
+```
+train.sub <- training[c(2,8,9,10,11,37,38,39,40,41,42,43,44,45,46,47,48,49,60,61,62,63,64,65,66,67,68,84,85,86,102,113,114,115,116,117,118,119,120,121,122,123,124,140,151,152,153,154,155,156,157,158,159,160)]
+```
+```
+fit2 <- predict(fit1, final)
+table(pred,testing$classe)
+```
+
+It's estimated that the out of sample error would reflect the Kappa statistic of r:
+```
+confusionMatrix(predict(fit2, testing, factor(testing$classe))$overall["Kappa"]
+```
+100% of the pml-testing.csv cases classified correctly! The random forest algorithm appears to perform very well for predicting activities from accelerometers measurements.
+
