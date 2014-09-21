@@ -17,7 +17,9 @@ Firstly for preparing the workspace we have to think about loading packages like
 Next, we have to prepare consistent data with variables needed to predict manner. Preparation of data is divided into several steps including:
 
 1.) loading data from data set divided into two groups (pml-training and pml-testing)
+
 2.) repacling #DIV/0! with NA
+
 3.) replacing blank spaces with NA
 
 ```{r echo=TRUE, results='hide', message=FALSE}
@@ -38,6 +40,7 @@ testing_data <- read.csv("c:/machine/pml-testing.csv", header = T, na.strings = 
 The first thing to consider when creating is to ask the right question for the purpose of the model. The true purpose of this model is to predict the correct classification of the pml-testing using the quantitative data in pml-training.csv for development the model. According to computational complexity we have to choose the variables in order to importance to predicting manners. These selections we could divorce into:
 
 1.) removing data including NAs
+
 2.) removing collums in order to importance to predicting the manner
 
 ```{r echo=TRUE, results='hide', message=FALSE}
