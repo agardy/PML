@@ -65,3 +65,4 @@ confusionMatrix(predict(fit2, testing, factor(testing$classe))$overall["Kappa"]
 ```
 100% of the pml-testing.csv cases classified correctly! The random forest algorithm appears to perform very well for predicting activities from accelerometers measurements.
 
+Code available  [here](https://github.com/agardy/PML/blob/project.r/project.r)
